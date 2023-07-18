@@ -1,13 +1,14 @@
 import { IconSearch, TablerIconsProps } from "@tabler/icons-react";
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, ReactNode } from "react";
 
 interface Props {
 	Icon: (props: TablerIconsProps) => JSX.Element;
 	onSearch: ChangeEventHandler<HTMLInputElement>;
 	propertie: string;
+	children?: ReactNode;
 }
 
-export const SearchInput = ({ Icon, onSearch, propertie }: Props) => {
+export const SearchInput = ({ Icon, onSearch, propertie, children }: Props) => {
 	return (
 		<form className="flex items-center w-full mt-4 sm:mt-0">
 			<label htmlFor="simple-search" className="sr-only">
@@ -26,13 +27,13 @@ export const SearchInput = ({ Icon, onSearch, propertie }: Props) => {
 					type="text"
 				/>
 			</div>
-			<button
-				type="submit"
-				className="p-2.5 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
-			>
-				<IconSearch className="w-4 h-4" />
-				<span className="sr-only">Buscar</span>
-			</button>
+			<div className="flex gap-1.5">
+				<button className="p-2.5 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+					<IconSearch className="w-4 h-4" />
+					<span className="sr-only">Buscar</span>
+				</button>
+				{children}
+			</div>
 		</form>
 	);
 };

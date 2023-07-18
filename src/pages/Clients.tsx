@@ -1,4 +1,4 @@
-import { IconUser } from "@tabler/icons-react";
+import { IconPlus, IconUser } from "@tabler/icons-react";
 import { DropdownOrderBy, Header, SearchInput } from "../components";
 
 export const Clients = () => {
@@ -18,7 +18,11 @@ export const Clients = () => {
 						Icon={IconUser}
 						onSearch={console.log}
 						propertie="clientes"
-					/>
+					>
+						<button className="p-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+							<IconPlus className="w-4 h-4" />
+						</button>
+					</SearchInput>
 				</div>
 			</Header>
 
