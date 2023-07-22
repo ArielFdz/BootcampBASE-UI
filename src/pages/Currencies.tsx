@@ -1,6 +1,12 @@
 import { IconCoin } from "@tabler/icons-react";
 import { DropdownOrderBy, Header, SearchInput } from "../components";
 
+//TODO Renderizar arreglo de currencies
+//TODO Crear condicion en caso de que no haya datos
+//TODO Hacer el ordenado
+//TODO Crear handleDropdown para ordenar
+//TODO Crear handleSearch filtrar el arreglo
+
 export const Currencies = () => {
 	return (
 		<>
@@ -8,7 +14,7 @@ export const Currencies = () => {
 				<h1 className="text-3xl font-bold tracking-tight text-gray-900">
 					Divisas
 				</h1>
-				<div className="flex sm:w-96 w-full gap-2">
+				<div className="flex w-full gap-2 sm:w-96">
 					<DropdownOrderBy
 						onChange={console.log}
 						options={[]}
