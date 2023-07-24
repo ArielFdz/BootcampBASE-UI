@@ -12,8 +12,8 @@ import { clientsMock } from "../mocks";
 import { useToggle } from "../hooks";
 
 export const Clients = () => {
-	const [clients, setCliets] = useState<IClient[]>([]);
-	const [currenOrderOption, setCurrenOrderOption] = useState("customerId");
+	const [clients, setClients] = useState<IClient[]>([]);
+	const [currentOrderOption, setCurrentOrderOption] = useState("customerId");
 	const [isOpen, setIsOpen] = useToggle();
 
 	const orderOptions: { label: string; value: string }[] = [
@@ -24,15 +24,15 @@ export const Clients = () => {
 	];
 
 	useEffect(() => {
-		setCliets(clientsMock);
-		setCliets((prevState) => orderClients(prevState, currenOrderOption));
+		setClients(clientsMock);
+		setClients((prevState) => orderClients(prevState, currentOrderOption));
 	}, []);
 
 	const orderClients = (
 		clients: IClient[],
-		currenOrderOption: string,
+		currentOrderOption: string,
 	): IClient[] => {
-		let key = currenOrderOption as keyof (typeof clients)[0];
+		let key = currentOrderOption as keyof (typeof clients)[0];
 
 		const newClients: IClient[] = clients.sort((a: IClient, b: IClient) => {
 			if (a[key] > b[key]) return 1;
@@ -43,20 +43,20 @@ export const Clients = () => {
 	};
 
 	const handleDropdown = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setCurrenOrderOption(e.target.value);
-		setCliets(orderClients(clients, e.target.value));
+		setCurrentOrderOption(e.target.value);
+		setClients(orderClients(clients, e.target.value));
 	};
 
 	const handleSearch = (searchWord: string) => {
 		if (searchWord === "") {
-			setCliets(clientsMock);
+			setClients(clientsMock);
 		} else {
 			let newClients = clientsMock.filter((client) => {
 				if (searchWord === client.customerId.toString()) {
 					return client;
 				}
 			});
-			setCliets(newClients);
+			setClients(newClients);
 		}
 	};
 
@@ -77,7 +77,7 @@ export const Clients = () => {
 					<DropdownOrderBy
 						onChange={handleDropdown}
 						options={orderOptions}
-						value={currenOrderOption}
+						value={currentOrderOption}
 					/>
 					<SearchInput
 						Icon={IconUser}
