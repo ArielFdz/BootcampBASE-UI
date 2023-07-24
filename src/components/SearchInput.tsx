@@ -23,7 +23,6 @@ export const SearchInput = ({ Icon, onSearch, propertie, children }: Props) => {
 					id="simple-search"
 					onChange={onSearch}
 					placeholder={`Buscar ${propertie}`}
-					required
 					type="text"
 				/>
 			</div>
