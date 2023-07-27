@@ -48,16 +48,22 @@ export const Clients = () => {
 	};
 
 	const handleSearch = (searchWord: string) => {
-		if (searchWord === "") {
-			setClients(clientsMock);
-		} else {
-			let newClients = clientsMock.filter((client) => {
-				if (searchWord === client.customerId.toString()) {
-					return client;
-				}
-			});
-			setClients(newClients);
+		if (!searchWord || typeof searchWord !== "string") {
+		  setClients(orderClients(clientsMock, currentOrderOption));
+		  return;
 		}
+		const searchLower = searchWord.toLowerCase();
+		const newCurrencies = clients.filter((client) => {
+			return (
+				client.name.toLowerCase().includes(searchLower) ||
+				client.curp.toLowerCase().includes(searchLower) ||
+				client.gender.toLowerCase().includes(searchLower) ||
+				client.birthdate.toString().toLowerCase().includes(searchLower) ||
+				client.customerId.toString().toLowerCase().includes(searchLower)
+			);
+		});
+	  
+		setClients(newCurrencies);
 	};
 
 	return (
