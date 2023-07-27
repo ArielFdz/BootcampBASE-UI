@@ -14,7 +14,7 @@ export const Currencies = () => {
 		value: string;
 	}[] = [
 		{ label: "Nombre", value: "name" },
-		{ label: "Valor", value: "value" },
+		{ label: "Cambio", value: "value" },
 	];
 
 	const orderCurrency = (currencies: ICurrency[],
