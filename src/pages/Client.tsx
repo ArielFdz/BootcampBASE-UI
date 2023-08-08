@@ -1,7 +1,10 @@
 import { IconPlus } from "@tabler/icons-react";
 import { Header } from "../components/Header";
+import { useParams } from "react-router-dom";
 
 export const Client = () => {
+	const { id } = useParams();
+	
 	return (
 		<>
 			<Header>

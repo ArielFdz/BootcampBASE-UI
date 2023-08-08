@@ -1,14 +1,57 @@
+import { FormEvent, useState } from "react";
+
 import { Modal } from ".";
+import { Client } from "../interfaces";
+import { useCreateCustomer } from "../api";
 
 interface Props {
 	isOpen: boolean;
 	onClose: () => void;
+	getCustomersInfo: () => void;
 }
 
-export const CreateClientModal = ({ isOpen, onClose }: Props) => {
+export const CreateClientModal = ({
+	isOpen,
+	onClose,
+	getCustomersInfo,
+}: Props) => {
+	const createCustomer = useCreateCustomer();
+
+	const [info, setInfo] = useState<Omit<Client, "customerId">>({
+		name: "",
+		curp: "",
+		gender: "",
+		birthdate: "",
+	});
+
+	const submitForm = (e: FormEvent) => {
+		e.preventDefault();
+
+		createCustomer.mutate(info, {
+			onSuccess: (received) => {
+				alert(
+					`Usuario ${received.information.customerId} registrado correctamente.`,
+				);
+
+				// Limpiando la información del formulario, 
+				// cerrando el modal y recargando la información de los clientes.
+				setInfo({
+					name: "",
+					curp: "",
+					gender: "",
+					birthdate: "",
+				});
+
+				onClose();
+
+				getCustomersInfo();
+			},
+		});
+	};
+
 	return (
 		<Modal isOpen={isOpen} onClose={onClose}>
-			<form>
+			<form onSubmit={submitForm}>
 				<div className="mb-6">
 					<label
 						htmlFor="name"
@@ -23,6 +66,10 @@ export const CreateClientModal = ({ isOpen, onClose }: Props) => {
 						required
 						name="name"
 						type="text"
+						onChange={(e) =>
+							setInfo({ ...info, name: e.target.value })
+						}
+						value={info.name}
 					/>
 				</div>
 				<div className="mb-6">
@@ -39,6 +86,10 @@ export const CreateClientModal = ({ isOpen, onClose }: Props) => {
 						required
 						name="curp"
 						type="text"
+						onChange={(e) =>
+							setInfo({ ...info, curp: e.target.value })
+						}
+						value={info.curp}
 					/>
 				</div>
 				<div className="mb-6">
@@ -53,7 +104,14 @@ export const CreateClientModal = ({ isOpen, onClose }: Props) => {
 						id="gender"
 						required
 						name="gender"
+						onChange={(e) =>
+							setInfo({ ...info, gender: e.target.value })
+						}
+						value={info.gender}
 					>
+						<option value="" disabled>
+							Seleccione
+						</option>
 						<option value="HOMBRE">Masculino</option>
 						<option value="MUJER">Femenino</option>
 					</select>
@@ -71,10 +129,15 @@ export const CreateClientModal = ({ isOpen, onClose }: Props) => {
 						required
 						name="birthdate"
 						type="date"
+						onChange={(e) =>
+							setInfo({ ...info, birthdate: e.target.value })
+						}
+						value={info.birthdate}
 					/>
 				</div>
 				<button
 					type="submit"
+					onClick={submitForm}
 					className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
 				>
 					Añadir cliente

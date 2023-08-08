@@ -6,29 +6,42 @@ import {
 	Header,
 	SearchInput,
 } from "../components";
-import { useEffect, useState } from "react";
+/*import { useEffect, useState } from "react";
 import { Client as IClient } from "../interfaces";
-import { clientsMock } from "../mocks";
+import { clientsMock } from "../mocks";*/
 import { useToggle } from "../hooks";
+import { useGetCustomers } from "../api";
+import { Client as IClient } from "../interfaces";
+import { FetchingData } from "../components/FetchingData";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export const Clients = () => {
-	const [clients, setClients] = useState<IClient[]>([]);
+	/*const [clients, setClients] = useState<IClient[]>([]);
 	const [currentOrderOption, setCurrentOrderOption] = useState("customerId");
-	const [isOpen, setIsOpen] = useToggle();
+	const [isOpen, setIsOpen] = useToggle();*/
+	const [isOpen, toogleIsOpen] = useToggle();
+	const [currentOrderOption, setCurrentOrderOption] = useState("");
 
-	const orderOptions: { label: string; value: string }[] = [
+	/*const orderOptions: { label: string; value: string }[] = [
 		{ label: "Nombre", value: "name" },
 		{ label: "ID", value: "customerId" },
 		{ label: "Curp", value: "curp" },
 		{ label: "edad", value: "birthdate" },
-	];
+	];*/
 
-	useEffect(() => {
+	/*useEffect(() => {
 		setClients(clientsMock);
 		setClients((prevState) => orderClients(prevState, currentOrderOption));
-	}, []);
+	}, []);*/
 
-	const orderClients = (
+	const orderOptions = [
+		{ label: "Id", value: "customerId" },
+		{ label: "Nombre", value: "name" },
+		{ label: "Curp", value: "curp" },
+		{ label: "Edad", value: "birthdate" },
+	];
+
+	/*const orderClients = (
 		clients: IClient[],
 		currentOrderOption: string,
 	): IClient[] => {
@@ -40,9 +53,25 @@ export const Clients = () => {
 			return 0;
 		});
 		return newClients;
+	};*/
+
+	const orderClients = (
+		clients: IClient[],
+		currentOrderOption: string,
+	): IClient[] => {
+		const key = currentOrderOption as keyof IClient;
+		const copyClients = [...clients];
+
+		const orderedClients = copyClients.sort((a, b) => {
+			if (a[key] > b[key]) return 1;
+			if (a[key] < b[key]) return -1;
+			return 0;
+		});
+
+		return orderedClients;
 	};
 
-	const handleDropdown = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	/*const handleDropdown = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setCurrentOrderOption(e.target.value);
 		setClients(orderClients(clients, e.target.value));
 	};
@@ -64,14 +93,35 @@ export const Clients = () => {
 		});
 	  
 		setClients(newCurrencies);
+	};*/
+
+	const [search, setSearch] = useState("");
+	const [clients, setClients] = useState<IClient[]>([]);
+
+	const { isError, isLoading, mutate } = useGetCustomers();
+
+	useEffect(() => {
+		getCustomersInfo();
+	}, [search]);
+
+	const handleDropdown = (e: ChangeEvent<HTMLSelectElement>) => {
+		setCurrentOrderOption(e.target.value);
+		setClients(orderClients(clients, e.target.value));
+	};
+
+	const getCustomersInfo = () => {
+		mutate(search, {
+			onSuccess: (data) => setClients(data),
+		});
 	};
 
 	return (
 		<>
 			<CreateClientModal
-				isOpen={isOpen}
+				isOpen={isOpen} 
+				getCustomersInfo={getCustomersInfo}
 				onClose={() => {
-					setIsOpen();
+					toogleIsOpen();
 				}}
 			/>
 
@@ -87,12 +137,12 @@ export const Clients = () => {
 					/>
 					<SearchInput
 						Icon={IconUser}
-						onSearch={(e) => handleSearch(e.target.value)}
+						onSearch={(e) => setSearch(e.target.value)}
 						propertie="clientes"
 					>
 						<button
 							type="button"
-							onClick={() => setIsOpen()}
+							onClick={() => toogleIsOpen()}
 							className="p-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
 						>
 							<IconPlus className="w-4 h-4" />
@@ -101,7 +151,7 @@ export const Clients = () => {
 				</div>
 			</Header>
 
-			<section className="flex flex-col items-center h-[calc(100vh-10rem)] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			{/* <section className="flex flex-col items-center h-[calc(100vh-10rem)] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<ul
 					role="list"
 					className="my-4 overflow-auto divide-y divide-gray-100"
@@ -123,6 +173,18 @@ export const Clients = () => {
 						))
 					)}
 				</ul>
+			</section> */}
+			<section className="flex flex-col items-center h-[calc(100vh-10rem)] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<FetchingData isLoading={isLoading} isError={isError}>
+					<ul
+						role="list"
+						className="my-4 overflow-auto divide-y divide-gray-100"
+					>
+						{clients.map((client) => (
+							<Client client={client} key={client.customerId} />
+						))}
+					</ul>
+				</FetchingData>
 			</section>
 		</>
 	);
